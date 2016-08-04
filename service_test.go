@@ -18,11 +18,11 @@ func TestGetWSOD(t *testing.T) {
 		found   bool
 		err     error
 	}{
-		{"Success", "localhost:8080/transformers/alphavilleseries/",
+		{"Success", "localhost:8080/transformers/wsod/",
 			[]term{term{CanonicalName: "Z_Archive", RawID: "b8337559-ac08-3404-9025-bad51ebe2fc7"}, term{CanonicalName: "Feature", RawID: "mNGQ2MWQ0NDMtMDc5Mi00NWExLTlkMGQtNWZhZjk0NGExOWU2-Z2VucVz"}},
-			[]wsodLink{wsodLink{APIURL: "localhost:8080/transformers/alphavilleseries/41c03fd4-8f24-3130-9f20-4d25c0909594"},
-				wsodLink{APIURL: "localhost:8080/transformers/alphavilleseries/44dc1ad7-76f1-39be-8ff1-3d5da91520ee"}}, true, nil},
-		{"Error on init", "localhost:8080/transformers/alphavilleseries/", []term{}, []wsodLink(nil), false, errors.New("Error getting taxonomy")},
+			[]wsodLink{wsodLink{APIURL: "localhost:8080/transformers/wsod/41c03fd4-8f24-3130-9f20-4d25c0909594"},
+				wsodLink{APIURL: "localhost:8080/transformers/wsod/44dc1ad7-76f1-39be-8ff1-3d5da91520ee"}}, true, nil},
+		{"Error on init", "localhost:8080/transformers/wsod/", []term{}, []wsodLink(nil), false, errors.New("Error getting taxonomy")},
 	}
 
 	for _, test := range tests {

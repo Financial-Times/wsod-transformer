@@ -16,7 +16,7 @@ const twoUUID = "two"
 const getIdsResponse = `{"id":"` + testUUID + `"}` + "\n"
 const getTwoIdsResponse = `{"id":"` + oneUUID + `"}` + "\n" + `{"id":"` + twoUUID + `"}` + "\n"
 const countResponse = "1"
-const getWSODResponse = `[{"apiUrl":"http://localhost:8080/transformers/alphavilleseries/bba39990-c78d-3629-ae83-808c333c6dbc"}]` + "\n"
+const getWSODResponse = `[{"apiUrl":"http://localhost:8080/transformers/wsod/bba39990-c78d-3629-ae83-808c333c6dbc"}]` + "\n"
 const getWSODByUUIDResponse = `{"uuid":"bba39990-c78d-3629-ae83-808c333c6dbc","alternativeIdentifiers":{"TME":["MTE3-U3ViamVjdHM="],"uuids":["bba39990-c78d-3629-ae83-808c333c6dbc"]},"prefLabel":"Global WSOD","type":"WSOD"}` + "\n"
 
 func TestHandlers(t *testing.T) {
@@ -29,14 +29,14 @@ func TestHandlers(t *testing.T) {
 		contentType  string // Contents of the Content-Type header
 		body         string
 	}{
-		{"Success - get wsod by uuid", newRequest("GET", fmt.Sprintf("/transformers/alphavilleseries/%s", testUUID)), &dummyService{found: true, wsod: []wsod{getDummyWSOD(testUUID, "Global WSOD", "MTE3-U3ViamVjdHM=")}}, http.StatusOK, "application/json", getWSODByUUIDResponse},
-		{"Not found - get wsod by uuid", newRequest("GET", fmt.Sprintf("/transformers/alphavilleseries/%s", testUUID)), &dummyService{found: false, wsod: []wsod{wsod{}}}, http.StatusNotFound, "application/json", ""},
-		{"Success - get wsod", newRequest("GET", "/transformers/alphavilleseries"), &dummyService{found: true, wsod: []wsod{wsod{UUID: testUUID}}}, http.StatusOK, "application/json", getWSODResponse},
-		{"Not found - get wsod", newRequest("GET", "/transformers/alphavilleseries"), &dummyService{found: false, wsod: []wsod{}}, http.StatusNotFound, "application/json", ""},
-		{"Success - get wsod ids", newRequest("GET", "/transformers/alphavilleseries/__ids"), &dummyService{found: true, wsod: []wsod{wsod{UUID: testUUID}}}, http.StatusOK, "", getIdsResponse},
-		{"Success - get 2 wsod ids", newRequest("GET", "/transformers/alphavilleseries/__ids"), &dummyService{found: true, wsod: []wsod{wsod{UUID: oneUUID}, wsod{UUID: twoUUID}}}, http.StatusOK, "", getTwoIdsResponse},
-		{"Not found - get wsod", newRequest("GET", "/transformers/alphavilleseries/__ids"), &dummyService{found: false, wsod: []wsod{}}, http.StatusNotFound, "application/json", ""},
-		{"Success - get wsod count", newRequest("GET", "/transformers/alphavilleseries/__count"), &dummyService{found: true, wsod: []wsod{wsod{UUID: testUUID}}}, http.StatusOK, "application/json", countResponse},
+		{"Success - get wsod by uuid", newRequest("GET", fmt.Sprintf("/transformers/wsod/%s", testUUID)), &dummyService{found: true, wsod: []wsod{getDummyWSOD(testUUID, "Global WSOD", "MTE3-U3ViamVjdHM=")}}, http.StatusOK, "application/json", getWSODByUUIDResponse},
+		{"Not found - get wsod by uuid", newRequest("GET", fmt.Sprintf("/transformers/wsod/%s", testUUID)), &dummyService{found: false, wsod: []wsod{wsod{}}}, http.StatusNotFound, "application/json", ""},
+		{"Success - get wsod", newRequest("GET", "/transformers/wsod"), &dummyService{found: true, wsod: []wsod{wsod{UUID: testUUID}}}, http.StatusOK, "application/json", getWSODResponse},
+		{"Not found - get wsod", newRequest("GET", "/transformers/wsod"), &dummyService{found: false, wsod: []wsod{}}, http.StatusNotFound, "application/json", ""},
+		{"Success - get wsod ids", newRequest("GET", "/transformers/wsod/__ids"), &dummyService{found: true, wsod: []wsod{wsod{UUID: testUUID}}}, http.StatusOK, "", getIdsResponse},
+		{"Success - get 2 wsod ids", newRequest("GET", "/transformers/wsod/__ids"), &dummyService{found: true, wsod: []wsod{wsod{UUID: oneUUID}, wsod{UUID: twoUUID}}}, http.StatusOK, "", getTwoIdsResponse},
+		{"Not found - get wsod", newRequest("GET", "/transformers/wsod/__ids"), &dummyService{found: false, wsod: []wsod{}}, http.StatusNotFound, "application/json", ""},
+		{"Success - get wsod count", newRequest("GET", "/transformers/wsod/__count"), &dummyService{found: true, wsod: []wsod{wsod{UUID: testUUID}}}, http.StatusOK, "application/json", countResponse},
 	}
 
 	for _, test := range tests {
@@ -58,10 +58,10 @@ func newRequest(method, url string) *http.Request {
 func router(s wsodService) *mux.Router {
 	m := mux.NewRouter()
 	h := newWSODHandler(s)
-	m.HandleFunc("/transformers/alphavilleseries", h.getWSOD).Methods("GET")
-	m.HandleFunc("/transformers/alphavilleseries/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getWSODByUUID).Methods("GET")
-	m.HandleFunc("/transformers/alphavilleseries/__ids", h.getWSODIds).Methods("GET")
-	m.HandleFunc("/transformers/alphavilleseries/__count", h.getWSODCount).Methods("GET")
+	m.HandleFunc("/transformers/wsod", h.getWSOD).Methods("GET")
+	m.HandleFunc("/transformers/wsod/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getWSODByUUID).Methods("GET")
+	m.HandleFunc("/transformers/wsod/__ids", h.getWSODIds).Methods("GET")
+	m.HandleFunc("/transformers/wsod/__count", h.getWSODCount).Methods("GET")
 	return m
 }
 
@@ -73,7 +73,7 @@ type dummyService struct {
 func (s *dummyService) getWSOD() ([]wsodLink, bool) {
 	var wsodLinks []wsodLink
 	for _, sub := range s.wsod {
-		wsodLinks = append(wsodLinks, wsodLink{APIURL: "http://localhost:8080/transformers/alphavilleseries/" + sub.UUID})
+		wsodLinks = append(wsodLinks, wsodLink{APIURL: "http://localhost:8080/transformers/wsod/" + sub.UUID})
 	}
 	return wsodLinks, s.found
 }
