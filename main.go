@@ -25,7 +25,7 @@ func init() {
 }
 
 func main() {
-	app := cli.App("alphaville-series-transformer", "A RESTful API for transforming TME AlphavilleSeries to UP json")
+	app := cli.App("wsod-transformer", "A RESTful API for transforming TME WSOD to UP json")
 	username := app.String(cli.StringOpt{
 		Name:   "tme-username",
 		Value:  "",
@@ -46,7 +46,7 @@ func main() {
 	})
 	baseURL := app.String(cli.StringOpt{
 		Name:   "base-url",
-		Value:  "http://localhost:8080/transformers/alphaville-series/",
+		Value:  "http://localhost:8080/transformers/wsod/",
 		Desc:   "Base url",
 		EnvVar: "BASE_URL",
 	})
@@ -77,21 +77,21 @@ func main() {
 
 	tmeTaxonomyName := app.String(cli.StringOpt{
 		Name:   "tme-taxonomy-name",
-		Value:  "AlphavilleSeriesClassification",
-		Desc:   "TME taxonomy name for Alphaville Series",
+		Value:  "WSODClassification",
+		Desc:   "TME taxonomy name for WSOD",
 		EnvVar: "TME_TAXONOMY_NAME",
 	})
 
 	app.Action = func() {
 		client := getResilientClient()
 
-		mf := new(alphavilleSeriesTransformer)
-		s, err := newAlphavilleSeriesService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, *tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, *tmeTaxonomyName, *maxRecords)
+		mf := new(wsodTransformer)
+		s, err := newWSODService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, *tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, *tmeTaxonomyName, *maxRecords)
 		if err != nil {
-			log.Errorf("Error while creating AlphavilleSeriesService: [%v]", err.Error())
+			log.Errorf("Error while creating WSODService: [%v]", err.Error())
 		}
 
-		h := newAlphavilleSeriesHandler(s)
+		h := newWSODHandler(s)
 		m := mux.NewRouter()
 
 		// The top one of these feels more correct, but the lower one matches what we have in Dropwizard,
@@ -100,13 +100,13 @@ func main() {
 		m.HandleFunc(status.PingPathDW, status.PingHandler)
 		m.HandleFunc(status.BuildInfoPath, status.BuildInfoHandler)
 		m.HandleFunc(status.BuildInfoPathDW, status.BuildInfoHandler)
-		m.HandleFunc("/__health", v1a.Handler("Alphaville Series Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
+		m.HandleFunc("/__health", v1a.Handler("WSOD Transformer Healthchecks", "Checks for accessing TME", h.HealthCheck()))
 		m.HandleFunc(status.GTGPath, h.GoodToGo)
 
-		m.HandleFunc("/transformers/alphaville-series", h.getAlphavilleSeries).Methods("GET")
-		m.HandleFunc("/transformers/alphaville-series/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getAlphavilleSeriesByUUID).Methods("GET")
-		m.HandleFunc("/transformers/alphaville-series/__ids", h.getAlphavilleSeriesIds).Methods("GET")
-		m.HandleFunc("/transformers/alphaville-series/__count", h.getAlphavilleSeriesCount).Methods("GET")
+		m.HandleFunc("/transformers/wsod", h.getWSOD).Methods("GET")
+		m.HandleFunc("/transformers/wsod/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", h.getWSODByUUID).Methods("GET")
+		m.HandleFunc("/transformers/wsod/__ids", h.getWSODIds).Methods("GET")
+		m.HandleFunc("/transformers/wsod/__count", h.getWSODCount).Methods("GET")
 
 		http.Handle("/", m)
 

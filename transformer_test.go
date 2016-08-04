@@ -10,26 +10,26 @@ import (
 func TestTransform(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
-		name             string
-		term             term
-		alphavilleSeries alphavilleSeries
+		name string
+		term term
+		wsod wsod
 	}{
-		{"Transform term to Alphaville Series", term{
+		{"Transform term to WSOD", term{
 			CanonicalName: "Africa Series",
 			RawID:         "Nstein_GL_AFTM_GL_164835"},
-			alphavilleSeries{
+			wsod{
 				UUID:      "56a141a4-9894-3559-b25b-d0142f8148ff",
 				PrefLabel: "Africa Series",
 				AlternativeIdentifiers: alternativeIdentifiers{
 					TME:   []string{"TnN0ZWluX0dMX0FGVE1fR0xfMTY0ODM1-U2VyaWVz"},
 					Uuids: []string{"56a141a4-9894-3559-b25b-d0142f8148ff"},
 				},
-				Type: "AlphavilleSeries"}},
+				Type: "WSOD"}},
 	}
 
 	for _, test := range tests {
-		expectedAlphavilleSeries := transformAlphavilleSeries(test.term, "Series")
-		assert.Equal(test.alphavilleSeries, expectedAlphavilleSeries, fmt.Sprintf("%s: Expected Alphaville Series incorrect", test.name))
+		expectedWSOD := transformWSOD(test.term, "Series")
+		assert.Equal(test.wsod, expectedWSOD, fmt.Sprintf("%s: Expected WSOD incorrect", test.name))
 	}
 
 }

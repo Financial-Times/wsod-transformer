@@ -1,6 +1,6 @@
 package main
 
-type alphavilleSeries struct {
+type wsod struct {
 	UUID                   string                 `json:"uuid"`
 	AlternativeIdentifiers alternativeIdentifiers `json:"alternativeIdentifiers,omitempty"`
 	PrefLabel              string                 `json:"prefLabel"`
@@ -12,7 +12,7 @@ type alternativeIdentifiers struct {
 	Uuids []string `json:"uuids,omitempty"`
 }
 
-type alphavilleSeriesLink struct {
+type wsodLink struct {
 	APIURL string `json:"apiUrl"`
 }
 
