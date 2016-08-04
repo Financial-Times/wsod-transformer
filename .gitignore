@@ -1,0 +1,9 @@
+target
+*.iml
+.idea
+.classpath
+.settings/
+.project
+/bin
+wsod-transformer
+cache.db
