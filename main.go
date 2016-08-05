@@ -77,7 +77,7 @@ func main() {
 
 	tmeTaxonomyName := app.String(cli.StringOpt{
 		Name:   "tme-taxonomy-name",
-		Value:  "WSODClassification",
+		Value:  "ON",
 		Desc:   "TME taxonomy name for WSOD",
 		EnvVar: "TME_TAXONOMY_NAME",
 	})
@@ -86,7 +86,7 @@ func main() {
 		client := getResilientClient()
 
 		mf := new(wsodTransformer)
-		s, err := newWSODService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, *tmeTaxonomyName, &tmereader.KnowledgeBases{}, mf), *baseURL, *tmeTaxonomyName, *maxRecords)
+		s, err := newWSODService(tmereader.NewTmeRepository(client, *tmeBaseURL, *username, *password, *token, *maxRecords, *slices, *tmeTaxonomyName, &tmereader.AuthorityFiles{}, mf), *baseURL, *tmeTaxonomyName, *maxRecords)
 		if err != nil {
 			log.Errorf("Error while creating WSODService: [%v]", err.Error())
 		}
